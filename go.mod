@@ -3,6 +3,7 @@ module github.com/4Noyis/ecommerce-product-api
 go 1.23.2
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.17.4
 	go.mongodb.org/mongo-driver/v2 v2.2.3

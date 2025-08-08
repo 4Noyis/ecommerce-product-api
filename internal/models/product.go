@@ -33,7 +33,7 @@ type Dimensions struct {
 }
 
 type ProductRating struct {
-	Avarage float64 `json:"average" bson:"average"`
+	Average float64 `json:"average" bson:"average"`
 	Count   int     `json:"count" bson:"count"`
 }
 
