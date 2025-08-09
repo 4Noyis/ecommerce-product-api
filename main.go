@@ -6,6 +6,7 @@ import (
 	"github.com/4Noyis/ecommerce-product-api/internal/repository"
 	"github.com/4Noyis/ecommerce-product-api/internal/services"
 	"github.com/4Noyis/ecommerce-product-api/pkg/database"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func main() {
@@ -16,11 +17,24 @@ func main() {
 	}
 	defer client.Close()
 
-	// Create repository
-	productRepo := repository.NewMongoProductRepository(client)
+	// Create repositories
+	//productRepo := repository.NewMongoProductRepository(client)
+	reviewsRepo := repository.NewMongoReviewsRepository(client)
+
+	// Create sample reviews for a sample product ID
+	// You can replace this with an actual product ID from your products collection
+	productID, _ := primitive.ObjectIDFromHex("aJZq8g6rGxoqSQ2J") // Sample ObjectID
+	createSampleReviews(reviewsRepo, productID)
 
 	// Create sample products using the dedicated function
-	createProductRepoSamples(productRepo)
+	// createProductRepoSamples(productRepo)
+}
+
+func createSampleReviews(reviewsRepo *repository.MongoReviewRepository, productID primitive.ObjectID) {
+	err := services.CreateSampleReviews(reviewsRepo, productID)
+	if err != nil {
+		log.Fatal("Failed to create sample reviews:", err)
+	}
 }
 
 func createProductRepoSamples(productRepo *repository.MongoProductRepository) {

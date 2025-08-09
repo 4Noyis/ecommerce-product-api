@@ -1,12 +1,14 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/4Noyis/ecommerce-product-api/internal/models"
 	"github.com/4Noyis/ecommerce-product-api/internal/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // GetSampleProducts returns a slice of sample product data for testing
@@ -200,5 +202,94 @@ func CreateSampleProducts(productRepo *repository.MongoProductRepository) error 
 	}
 
 	fmt.Printf("\n Successfully inserted %d out of %d sample products!\n", successCount, len(sampleProducts))
+	return nil
+}
+
+// GetSampleReviews returns a slice of sample review data for testing
+func GetSampleReviews(productID primitive.ObjectID) []models.Review {
+	now := time.Now()
+
+	return []models.Review{
+		{
+			ProductID: productID,
+			UserID:    "user123",
+			Rating:    5,
+			Title:     "Excellent product!",
+			Comment:   "This product exceeded my expectations. The quality is outstanding and it arrived quickly. Highly recommended!",
+			Verified:  true,
+			Helpful:   15,
+			CreatedAt: now.AddDate(0, 0, -7), // 7 days ago
+			UpdatedAt: now.AddDate(0, 0, -7),
+		},
+		{
+			ProductID: productID,
+			UserID:    "user456",
+			Rating:    4,
+			Title:     "Great value for money",
+			Comment:   "Really good product for the price. The only minor issue is the packaging could be better, but the product itself is solid.",
+			Verified:  true,
+			Helpful:   8,
+			CreatedAt: now.AddDate(0, 0, -3), // 3 days ago
+			UpdatedAt: now.AddDate(0, 0, -3),
+		},
+		{
+			ProductID: productID,
+			UserID:    "user789",
+			Rating:    3,
+			Title:     "Average product",
+			Comment:   "It's okay, does what it's supposed to do. Nothing special but nothing wrong either. Would consider other options next time.",
+			Verified:  false,
+			Helpful:   2,
+			CreatedAt: now.AddDate(0, 0, -1), // 1 day ago
+			UpdatedAt: now.AddDate(0, 0, -1),
+		},
+		{
+			ProductID: productID,
+			UserID:    "user101",
+			Rating:    5,
+			Title:     "Perfect!",
+			Comment:   "Absolutely love this! Works perfectly and the design is beautiful. Will definitely buy from this brand again.",
+			Verified:  true,
+			Helpful:   12,
+			CreatedAt: now.AddDate(0, 0, -14), // 2 weeks ago
+			UpdatedAt: now.AddDate(0, 0, -14),
+		},
+		{
+			ProductID: productID,
+			UserID:    "user202",
+			Rating:    2,
+			Title:     "Not as described",
+			Comment:   "Product quality is below expectations. The description doesn't match what I received. Customer service was helpful though.",
+			Verified:  true,
+			Helpful:   3,
+			CreatedAt: now.AddDate(0, 0, -5), // 5 days ago
+			UpdatedAt: now.AddDate(0, 0, -5),
+		},
+	}
+}
+
+// CreateSampleReviews inserts sample review data into the database
+func CreateSampleReviews(reviewRepo *repository.MongoReviewRepository, productID primitive.ObjectID) error {
+	sampleReviews := GetSampleReviews(productID)
+	ctx := context.Background()
+
+	fmt.Printf("Inserting sample reviews for product ID: %s...\n", productID.Hex())
+	successCount := 0
+
+	for i, review := range sampleReviews {
+		err := reviewRepo.Create(ctx, &review)
+		if err != nil {
+			log.Printf("Failed to insert review %d: %v", i+1, err)
+			continue
+		}
+		fmt.Printf("Inserted review: %s (Rating: %d/5)\n", review.Title, review.Rating)
+		successCount++
+	}
+
+	if successCount == 0 {
+		return fmt.Errorf("failed to insert any sample reviews")
+	}
+
+	fmt.Printf("\n Successfully inserted %d out of %d sample reviews!\n", successCount, len(sampleReviews))
 	return nil
 }

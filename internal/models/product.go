@@ -58,3 +58,33 @@ type CartItem struct {
 	Price     float64            `json:"price" bson:"price"` // price at time of adding
 	AddedAt   time.Time          `json:"added_at" bson:"added_at"`
 }
+
+type SearchRequest struct {
+	Query     string   `json:"query"`
+	Category  string   `json:"category"`
+	Brand     string   `json:"brand"`
+	Tags      []string `json:"tags"`
+	MinPrice  float64  `json:"min_price"`
+	MaxPrice  float64  `json:"max_price"`
+	MinRating float64  `json:"min_rating"`
+	InStock   bool     `json:"in_stock"`
+	SortBy    string   `json:"sort_by"`    // price, rating, newest, name
+	SortOrder string   `json:"sort_order"` // asc, desc
+	Page      int      `json:"page"`
+	Limit     int      `json:"limit"`
+}
+
+type SearchResponse struct {
+	Products   []*Product `json:"products"`
+	Total      int64      `json:"total"`
+	Page       int        `json:"page"`
+	Limit      int        `json:"limit"`
+	TotalPages int        `json:"total_pages"`
+}
+
+type APIResponse struct {
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data,omitempty"`
+	Error   string      `json:"error,omitempty"`
+	Message string      `json:"message,omitempty"`
+}
